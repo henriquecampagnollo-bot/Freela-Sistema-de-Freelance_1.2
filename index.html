@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreelaHub - Sistema de Freelance & Gestão de Vagas</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js para Dashboard -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            900: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .tab-active { border-bottom: 3px solid #16a34a; color: #16a34a; font-weight: 600; }
+        .star-rating i { cursor: pointer; transition: color 0.15s ease-in-out; }
+        
+        /* Estilos específicos de impressão para o currículo */
+        @media print {
+            body * { visibility: hidden; }
+            #resumePrintArea, #resumePrintArea * { visibility: visible; }
+            #resumePrintArea { position: absolute; left: 0; top: 0; width: 100%; }
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col font-sans text-slate-800 antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- Top Navigation Header -->
+    <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo & Brand -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchProfile(currentRole)">
+                    <div class="w-10 h-10 rounded-xl bg-brand-500 flex items-center justify-center text-slate-900 font-black text-xl shadow-lg shadow-brand-500/30">
+                        F
+                    </div>
+                    <div>
+                        <span class="text-xl font-extrabold tracking-tight">Freela<span class="text-brand-500">Hub</span></span>
+                        <span class="hidden sm:inline-block text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full ml-2 border border-slate-700">Protótipo Acadêmico</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                    <div class="hidden md:flex flex-col text-right">
+                        <span id="headerUserName" class="text-xs font-semibold text-slate-200">Prestador Conectado</span>
+                        <span id="headerRoleBadge" class="text-[10px] text-brand-500 font-bold uppercase tracking-wider">Candidato</span>
+                    </div>
+                    <button onclick="openRoleModal()" class="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg border border-slate-700 transition text-sm">
+                        <i class="fa-solid fa-user-gear text-brand-500"></i>
+                        <span class="hidden sm:inline font-medium">Trocar Perfil</span>
+                        <i class="fa-solid fa-chevron-down text-xs text-slate-400"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="bg-brand-600 text-white text-xs py-1 px-4 text-center font-medium flex items-center justify-center gap-2">
+            <i class="fa-solid fa-circle-info"></i>
+            <span>Plataforma de Alocação de Vagas Freelance e Gestão Operacional de Serviços Temporários</span>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- VIEW 1: PRESTADOR DE SERVIÇO / CANDIDATO -->
+        <section id="viewPrestador" class="space-y-6">
+            <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-brand-900 rounded-2xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden">
+                <div class="relative z-10 max-w-2xl">
+                    <span class="bg-brand-500/20 text-brand-500 text-xs font-bold px-3 py-1 rounded-full border border-brand-500/30 uppercase tracking-wide">Portal do Candidato</span>
+                    <h1 class="text-2xl md:text-3xl font-extrabold mt-3 tracking-tight">Encontre vagas freelance na gastronomia e eventos</h1>
+                    <p class="text-slate-300 text-sm md:text-base mt-2 leading-relaxed">
+                        Explore oportunidades de trabalho em salão, cozinha, bar e recepção na região de Itapetininga.
+                    </p>
+                    <div class="mt-4 flex flex-wrap gap-3">
+                        <button onclick="scrollToVagas()" class="bg-brand-500 hover:bg-brand-600 text-slate-9 font-bold text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2">
+                            <i class="fa-solid fa-magnifying-glass"></i> Ver Vagas Abertas
+                        </button>
+                        <button onclick="openModalCreateJob()" class="bg-slate-800 hover:bg-slate-700 text-slate-100 font-semibold text-xs sm:text-sm px-5 py-2.5 rounded-xl border border-slate-700 transition flex items-center gap-2">
+                            <i class="fa-solid fa-plus-circle text-brand-500"></i> Anunciar Vaga
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-b border-slate-200 flex space-x-6 overflow-x-auto">
+                <button onclick="switchCandidateTab('vagas')" id="tabBtnVagas" class="tab-active py-3 px-1 text-sm font-medium whitespace-nowrap flex items-center gap-2">
+                    <i class="fa-solid fa-briefcase"></i> Vagas Disponíveis
+                </button>
+                <button onclick="switchCandidateTab('minhasCandidaturas')" id="tabBtnMinhas" class="text-slate-500 hover:text-slate-700 py-3 px-1 text-sm font-medium whitespace-nowrap flex items-center gap-2">
+                    <i class="fa-solid fa-list-check"></i> Minhas Candidaturas
+                </button>
+                <button onclick="switchCandidateTab('perfil')" id="tabBtnPerfil" class="text-slate-500 hover:text-slate-700 py-3 px-1 text-sm font-medium whitespace-nowrap flex items-center gap-2">
+                    <i class="fa-solid fa-id-card"></i> Meu Cadastro e Currículo
+                </button>
+            </div>
+
+            <div id="candidateTabVagas" class="space-y-6">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                        <h2 class="font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-filter text-brand-600"></i> Filtrar Oportunidades
+                        </h2>
+                        <button onclick="resetUserFilters()" class="text-xs text-slate-500 hover:text-brand-600 font-medium underline flex items-center gap-1">
+                            <i class="fa-solid fa-rotate-left"></i> Limpar Filtros
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Palavra-chave</label>
+                            <input type="text" id="filterUserSearch" placeholder="Ex: Garçom..." oninput="applyUserFilters()" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                        </div>
+                        
+                        <!-- NOVO FILTRO: Cidade da Região -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Cidade</label>
+                            <select id="filterUserCity" onchange="applyUserFilters()" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                                <option value="">Qualquer Cidade</option>
+                                <option value="Itapetininga">Itapetininga</option>
+                                <option value="Tatuí">Tatuí</option>
+                                <option value="São Miguel Arcanjo">São Miguel Arcanjo</option>
+                                <option value="Capão Bonito">Capão Bonito</option>
+                                <option value="Sarapuí">Sarapuí</option>
+                                <option value="Alambari">Alambari</option>
+                                <option value="Guareí">Guareí</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Categoria</label>
+                            <select id="filterUserCategory" onchange="applyUserFilters()" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                                <option value="">Todas</option>
+                                <option value="Cozinha">Cozinha</option>
+                                <option value="Salão">Salão</option>
+                                <option value="Recepção">Recepção</option>
+                                <option value="Bar">Bar</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Área Principal</label>
+                            <select id="filterUserSector" onchange="applyUserFilters()" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                                <option value="">Salão ou Cozinha</option>
+                                <option value="Salão">Salão</option>
+                                <option value="Cozinha">Cozinha</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Urgência</label>
+                            <select id="filterUserUrgency" onchange="applyUserFilters()" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                                <option value="">Qualquer Urgência</option>
+                                <option value="Baixa">Baixa</option>
+                                <option value="Média">Média</option>
+                                <option value="Alta">Alta</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="vagasGridContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Gerado via JS -->
+                </div>
+            </div>
+
+            <div id="candidateTabMinhas" class="hidden space-y-6">
+                <!-- Tabela de Candidaturas (Mantida idêntica para brevidade visual) -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm overflow-x-auto">
+                    <table class="w-full text-left text-xs"><tbody id="myApplicationsTableBody"></tbody></table>
+                </div>
+            </div>
+
+            <div id="candidateTabPerfil" class="hidden">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm max-w-3xl mx-auto">
+                    <div class="flex items-center space-x-4 mb-6">
+                        <div class="w-16 h-16 rounded-full bg-slate-100 border-2 border-brand-500 flex items-center justify-center text-slate-600 font-bold text-2xl">
+                            <i class="fa-solid fa-user-gear"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-800" id="userProfileDisplayName">João da Silva</h2>
+                            <p class="text-xs text-slate-500">Documentação para Candidaturas e Geração de Currículo</p>
+                        </div>
+                    </div>
+
+                    <form id="formUserProfile" onsubmit="saveUserProfile(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div><label class="block text-xs font-semibold text-slate-700 mb-1">Nome Completo *</label><input type="text" id="userProfileName" required class="w-full text-xs border border-slate-300 rounded-lg p-2.5"></div>
+                            <div><label class="block text-xs font-semibold text-slate-700 mb-1">CPF *</label><input type="text" id="userProfileCPF" required class="w-full text-xs border border-slate-300 rounded-lg p-2.5"></div>
+                            <div><label class="block text-xs font-semibold text-slate-700 mb-1">E-mail *</label><input type="email" id="userProfileEmail" required class="w-full text-xs border border-slate-300 rounded-lg p-2.5"></div>
+                            <div><label class="block text-xs font-semibold text-slate-700 mb-1">Telefone *</label><input type="text" id="userProfilePhone" required class="w-full text-xs border border-slate-300 rounded-lg p-2
